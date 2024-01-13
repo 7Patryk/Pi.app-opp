@@ -1,0 +1,193 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+
+class Cipher {
+public:
+    virtual std::string encrypt(const std::string &text) const = 0;
+    virtual std::string decrypt(const std::string &text) const = 0;
+};
+
+class CaesarCipher : public Cipher {
+private:
+    int shift;
+
+public:
+    CaesarCipher(int shiftValue) : shift(shiftValue) {}
+
+    std::string encrypt(const std::string &text) const override {
+        std::string result = "";
+        for (char ch : text) {
+            if (isalpha(ch)) {
+                char base = islower(ch) ? 'a' : 'A';
+                result += static_cast<char>((ch - base + shift) % 26 + base);
+            } else {
+                result += ch;
+            }
+        }
+        return result;
+    }
+
+    std::string decrypt(const std::string &text) const override {
+        return encrypt(text); // Decryption is done by encryption with 26 - shift
+    }
+};
+
+class AtbashCipher : public Cipher {
+public:
+    std::string encrypt(const std::string &text) const override {
+        std::string result = "";
+        for (char ch : text) {
+            if (isalpha(ch)) {
+                char base = islower(ch) ? 'a' : 'A';
+                result += static_cast<char>(25 - (ch - base) + base);
+            } else {
+                result += ch;
+            }
+        }
+        return result;
+    }
+
+    std::string decrypt(const std::string &text) const override {
+        return encrypt(text); // Decryption is the same as encryption for Atbash cipher
+    }
+};
+
+class RailFenceCipher : public Cipher {
+public:
+    std::string encrypt(const std::string &text) const override {
+        // Implementation of Rail Fence encryption
+        return "Rail Fence Encryption Placeholder";
+    }
+
+    std::string decrypt(const std::string &text) const override {
+        // Implementation of Rail Fence decryption
+        return "Rail Fence Decryption Placeholder";
+    }
+};
+
+class VigenereCipher : public Cipher {
+private:
+    std::string key;
+
+public:
+    VigenereCipher(const std::string &keyValue) : key(keyValue) {}
+
+    std::string encrypt(const std::string &text) const override {
+        // Implementation of Vigenère encryption
+        return "Vigenère Encryption Placeholder";
+    }
+
+    std::string decrypt(const std::string &text) const override {
+        // Implementation of Vigenère decryption
+        return "Vigenère Decryption Placeholder";
+    }
+};
+
+class CipherProcessor {
+private:
+    Cipher *cipher;
+
+public:
+    CipherProcessor(Cipher *cipherInstance) : cipher(cipherInstance) {}
+
+    void process(const std::string &text, bool isEncrypt) const {
+        if (isEncrypt) {
+            std::cout << "Encrypted text: " << cipher->encrypt(text) << std::endl;
+        } else {
+            std::cout << "Decrypted text: " << cipher->decrypt(text) << std::endl;
+        }
+    }
+};
+
+int main() {
+    int choice;
+    bool isEncrypt;
+    std::string text, key;
+
+    do {
+        std::cout << "Choose an option:\n";
+        std::cout << "1. Encrypt\n";
+        std::cout << "2. Decrypt\n";
+        std::cout << "0. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        if (choice == 0) {
+            break;
+        }
+
+        std::cout << "Enter text: ";
+        std::cin.ignore();
+        std::getline(std::cin, text);
+
+        std::cout << "Choose a cipher:\n";
+        std::cout << "1. Caesar Cipher\n";
+        std::cout << "2. Atbash Cipher\n";
+        std::cout << "3. Rail Fence Cipher\n";
+        std::cout << "4. Vigenere Cipher\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int shift;
+                std::cout << "Enter the shift value: ";
+                std::cin >> shift;
+
+                CaesarCipher caesar(shift);
+                CipherProcessor processor(&caesar);
+
+                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                std::cin >> isEncrypt;
+
+                processor.process(text, isEncrypt);
+                break;
+            }
+            case 2: {
+                AtbashCipher atbash;
+                CipherProcessor processor(&atbash);
+
+                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                std::cin >> isEncrypt;
+
+                processor.process(text, isEncrypt);
+                break;
+            }
+            case 3: {
+                int rails;
+                std::cout << "Enter the number of rails: ";
+                std::cin >> rails;
+
+                RailFenceCipher railFence;
+                CipherProcessor processor(&railFence);
+
+                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                std::cin >> isEncrypt;
+
+                processor.process(text, isEncrypt);
+                break;
+            }
+            case 4: {
+                std::cout << "Enter the key for Vigenere Cipher: ";
+                std::cin >> key;
+
+                VigenereCipher vigenere(key);
+                CipherProcessor processor(&vigenere);
+
+                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                std::cin >> isEncrypt;
+
+                processor.process(text, isEncrypt);
+                break;
+            }
+            default:
+                std::cout << "Invalid choice. Please enter a valid option.\n";
+        }
+
+    } while (choice != 0);
+
+    std::cout << "Exiting program.\n";
+
+    return 0;
+}
