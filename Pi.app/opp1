@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
 #include <cctype>
-
+using namespace std;
 class Cipher {
 public:
-    virtual std::string encrypt(const std::string &text) const = 0;
-    virtual std::string decrypt(const std::string &text) const = 0;
+    virtual string encrypt(const string &text) const = 0;
+    virtual string decrypt(const string &text) const = 0;
 };
 
 class CaesarCipher : public Cipher {
@@ -15,8 +15,8 @@ private:
 public:
     CaesarCipher(int shiftValue) : shift(shiftValue) {}
 
-    std::string encrypt(const std::string &text) const override {
-        std::string result = "";
+    string encrypt(const string &text) const override {
+        string result = "";
         for (char ch : text) {
             if (isalpha(ch)) {
                 char base = islower(ch) ? 'a' : 'A';
@@ -28,15 +28,15 @@ public:
         return result;
     }
 
-    std::string decrypt(const std::string &text) const override {
+    string decrypt(const string &text) const override {
         return encrypt(text); // Decryption is done by encryption with 26 - shift
     }
 };
 
 class AtbashCipher : public Cipher {
 public:
-    std::string encrypt(const std::string &text) const override {
-        std::string result = "";
+    string encrypt(const string &text) const override {
+        string result = "";
         for (char ch : text) {
             if (isalpha(ch)) {
                 char base = islower(ch) ? 'a' : 'A';
@@ -48,7 +48,7 @@ public:
         return result;
     }
 
-    std::string decrypt(const std::string &text) const override {
+    string decrypt(const string &text) const override {
         return encrypt(text); // Decryption is the same as encryption for Atbash cipher
     }
 };
@@ -73,16 +73,16 @@ public:
         }
 
         // Combine the fence rows to get the encrypted text
-        std::string result = "";
-        for (const std::string &row : fence) {
+        string result = "";
+        for (const string &row : fence) {
             result += row;
         }
 
         return result;
     }
 
-    std::string decrypt(const std::string &text) const override {
-        std::vector<std::string> fence(rails, "");
+    string decrypt(const string &text) const override {
+        vector<string> fence(rails, "");
         int currentIndex = 0;
 
         // Calculate the size of each rail
@@ -113,7 +113,7 @@ public:
         }
 
         // Reconstruct the original text
-        std::string result = "";
+        string result = "";
         rail = 0;
         directionDown = true;
         for (int i = 0; i < text.length(); ++i) {
@@ -149,11 +149,11 @@ private:
 public:
     CipherProcessor(Cipher *cipherInstance) : cipher(cipherInstance) {}
 
-    void process(const std::string &text, bool isEncrypt) const {
+    void process(const string &text, bool isEncrypt) const {
         if (isEncrypt) {
-            std::cout << "Encrypted text: " << cipher->encrypt(text) << std::endl;
+            cout << "Encrypted text: " << cipher->encrypt(text) << endl;
         } else {
-            std::cout << "Decrypted text: " << cipher->decrypt(text) << std::endl;
+            cout << "Decrypted text: " << cipher->decrypt(text) << endl;
         }
     }
 };
@@ -161,42 +161,42 @@ public:
 int main() {
     int choice;
     bool isEncrypt;
-    std::string text, key;
+    string text, key;
 
     do {
-        std::cout << "Choose an option:\n";
-        std::cout << "1. Encrypt\n";
-        std::cout << "2. Decrypt\n";
-        std::cout << "0. Exit\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        cout << "Choose an option:\n";
+        cout << "1. Encrypt\n";
+        cout << "2. Decrypt\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
         if (choice == 0) {
             break;
         }
 
-        std::cout << "Enter text: ";
-        std::cin.ignore();
-        std::getline(std::cin, text);
+        cout << "Enter text: ";
+        cin.ignore();
+        getline(cin, text);
 
-        std::cout << "Choose a cipher:\n";
-        std::cout << "1. Caesar Cipher\n";
-        std::cout << "2. Atbash Cipher\n";
-        std::cout << "3. Rail Fence Cipher\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        cout << "Choose a cipher:\n";
+        cout << "1. Caesar Cipher\n";
+        cout << "2. Atbash Cipher\n";
+        cout << "3. Rail Fence Cipher\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
         switch (choice) {
             case 1: {
                 int shift;
-                std::cout << "Enter the shift value: ";
-                std::cin >> shift;
+                cout << "Enter the shift value: ";
+                cin >> shift;
 
                 CaesarCipher caesar(shift);
                 CipherProcessor processor(&caesar);
 
-                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
-                std::cin >> isEncrypt;
+                cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                cin >> isEncrypt;
 
                 processor.process(text, isEncrypt);
                 break;
@@ -205,46 +205,46 @@ int main() {
                 AtbashCipher atbash;
                 CipherProcessor processor(&atbash);
 
-                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
-                std::cin >> isEncrypt;
+                cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                cin >> isEncrypt;
 
                 processor.process(text, isEncrypt);
                 break;
             }
             case 3: {
                 int rails;
-                std::cout << "Enter the number of rails: ";
-                std::cin >> rails;
+                cout << "Enter the number of rails: ";
+                cin >> rails;
 
                 RailFenceCipher railFence;
                 CipherProcessor processor(&railFence);
 
-                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
-                std::cin >> isEncrypt;
+                cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                cin >> isEncrypt;
 
                 processor.process(text, isEncrypt);
                 break;
             }
             case 4: {
-                std::cout << "Enter the key for Vigenere Cipher: ";
-                std::cin >> key;
+                cout << "Enter the key for Vigenere Cipher: ";
+                cin >> key;
 
                 VigenereCipher vigenere(key);
                 CipherProcessor processor(&vigenere);
 
-                std::cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
-                std::cin >> isEncrypt;
+                cout << "Encrypting or Decrypting? (1 for Encrypt, 0 for Decrypt): ";
+                cin >> isEncrypt;
 
                 processor.process(text, isEncrypt);
                 break;
             }
             default:
-                std::cout << "Invalid choice. Please enter a valid option.\n";
+                cout << "Invalid choice. Please enter a valid option.\n";
         }
 
     } while (choice != 0);
 
-    std::cout << "Exiting program.\n";
+    cout << "Exiting program.\n";
 
     return 0;
 }
